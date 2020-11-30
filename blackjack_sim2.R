@@ -1,10 +1,18 @@
+##blackjack simulation
+
+#runs, specify the length
+
+
 #Build the Deck
 #We will create six decks
 #Suits don't matter, only the VALUE of the card matters
 library(dplyr)
+source("functions.R")
+#source("functions_play_hands_hit_hard_16.R")
+source("functions_play_hands.R")
 bets_all_all <- list()
 winnings_all_all <- list()
-runs <- 500
+runs <- 1000
 
 for(z in 1:runs)
 {
@@ -236,6 +244,7 @@ dealer_sum <- sum_cards(unlist(dealer_hands_all[i]))
 #print(player_hands_all[[i]][1,3:14])
 bets[i] <- 0
 winnings[i] <-0
+k = 1
 for(k in 1:4)
 {
   if(player_hands_all[[i]][k,1] == 1){
@@ -245,29 +254,30 @@ bets[i] <- player_hands_all[[i]][k,2] + bets[i]
 if (player_sum == 21 & player_hands_all[[i]][k,3] %in% c(10,11) & player_hands_all[[i]][k,4] %in% c(10,11) &
   dealer_sum == 21 & unlist(dealer_hands_all[i]))
 {
-  winnings[i] <- bets[i]*2.5 + winnings[i]
+  winnings[i] <- player_hands_all[[i]][k,2] *2.5 + winnings[i]
 }
 else if (dealer_sum <= 21 & player_sum <=21 & player_sum > dealer_sum)
 {
-  winnings[i] <- bets[i]*2 + winnings[i]
+  winnings[i] <- player_hands_all[[i]][k,2] *2 + winnings[i]
 }
 else if (dealer_sum <= 21 & player_sum <=21 & player_sum < dealer_sum)
 {
-  winnings[i] <- bets[i]*0 + winnings[i]
+  winnings[i] <- player_hands_all[[i]][k,2]*0 + winnings[i]
 }
 else if (dealer_sum <= 21 & player_sum <=21 & player_sum == dealer_sum)
 {
-  winnings[i] <- bets[i]*1 + winnings[i]
+  winnings[i] <- player_hands_all[[i]][k,2]*1 + winnings[i]
 }
 else if (dealer_sum > 21 & player_sum <=21 )
 {
-  winnings[i] <- bets[i]*2 + winnings[i]
+  winnings[i] <- player_hands_all[[i]][k,2]*2 + winnings[i]
 }
 else if (player_sum > 21 )
 {
-  winnings[i] <- bets[i]*0 + winnings[i]
+  winnings[i] <- player_hands_all[[i]][k,2]*0 + winnings[i]
 }
   }
+  k = k+1
 }
 
 #print(sum_cards(player_hands_all[[1]][2,3:14]))
@@ -287,9 +297,15 @@ z <- z+1
 
 }
 
+
+##limit
+#limit = runs
+limit = 100
+
 bets_all_all
 winnings_all
-for (u in 1:runs)
+#for (u in 1:runs)
+for (u in 1:limit)
 {
   temp_bets <- bets_all_all[[u]]
   temp_winnings <- winnings_all_all[[u]]
@@ -299,7 +315,7 @@ for (u in 1:runs)
   if(u == 1)
   {
     #plot((final$dif))
-    plot(1,type='n',xlim=c(1,500),ylim=c(-800,800),xlab='ID', ylab='Frequency')
+    plot(1,type='n',xlim=c(1,numsim),ylim=c(-600,600),xlab='Shoe Number', ylab='Cumulative Winnings')
     lines(cumsum(final$dif))
   }
   else
@@ -341,7 +357,8 @@ winning <- 0
 losing <- 0
 break_even <- 0
 
-for(h in 1:runs)
+#for(h in 1:runs)
+for(h in 1:limit)
 {
   total_bets <- sum(bets_all_all[[h]]) + total_bets
   total_winnings <- sum(winnings_all_all[[h]]) + total_winnings
@@ -366,13 +383,19 @@ for(h in 1:runs)
 
 total_bets
 total_winnings
+total_winnings-total_bets
 max_winnings
 biggest_loss
 winning
 losing
 break_even
+house_edge <- total_winnings/sum(total_winnings,total_bets)
+house_edge
+.50-house_edge
 
+average_loss = (total_winnings-total_bets)/limit
 
+average_loss
 #setwd("C:/Users/Andrew/Documents/Georgia Tech/ISYE6644/simulation")
 #save(winnings_all_all, file = "winnings_all_all.RData")
 #save(bets_all_all, file = "bets_all_all.RData")
