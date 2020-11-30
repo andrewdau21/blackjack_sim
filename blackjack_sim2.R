@@ -1,35 +1,50 @@
 ##blackjack simulation
 
 #runs, specify the length
-
+runs <- 10
+shoes <- 5
 
 #Build the Deck
 #We will create six decks
 #Suits don't matter, only the VALUE of the card matters
 library(dplyr)
+
+#call the assist functions
 source("functions.R")
-#source("functions_play_hands_hit_hard_16.R")
-source("functions_play_hands.R")
+
+#hit hard 16's? TRUE or FALSE
+hh16 <- FALSE
+
+if (hh16 == TRUE)
+{
+  source("functions_play_hands_hit_hard_16.R")
+}
+if (hh16 == FALSE)
+{
+  source("functions_play_hands.R") 
+}
+
+#initiate lists,not the most efficient storage, but work here.
 bets_all_all <- list()
 winnings_all_all <- list()
-runs <- 1000
 
+
+#simulation loop
 for(z in 1:runs)
 {
 
 '%!in%' <- function(x,y)!('%in%'(x,y))
 bets_all <-vector()
 winnings_all <- vector()
-numsim <- 10
+numsim <- shoes
 for (j in 1:numsim)
 {
 deck <- rep(c(2:10, 10, 10, 10, 11), 4)
 
 six_deck <- rep(deck,6)
 
-#i <- 150
+
 set.seed(j*z+500)
-#set.seed(j*3+500)
 six_deck_shuffled <-sample(six_deck,length(six_deck), replace = FALSE)
 six_deck_shuffled
 six_deck_shuffled2 <- six_deck_shuffled
@@ -132,7 +147,6 @@ for (i in 1:4)
       }
       if(up_card == 10)
       {
-        print ("im where I shouldnt' be")
         current_card_index = 5
         aaa <- dealer_hand_10(player_hands[i,3:14],i,player_hands,six_deck_shuffled,current_card_index)
         six_deck_shuffled <- aaa$it3
@@ -235,13 +249,7 @@ for(i in 1:looper)
 {
   print(i)
 dealer_sum <- sum_cards(unlist(dealer_hands_all[i]))
-#player_sum <- sum_cards(player_hands_all[[i]][1,3:14])
-#print("dealer")
-#print(dealer_sum)
-#print(unlist(dealer_hands_all[i]))
-#print("player")
-#print(player_sum)
-#print(player_hands_all[[i]][1,3:14])
+
 bets[i] <- 0
 winnings[i] <-0
 k = 1
@@ -280,9 +288,7 @@ else if (player_sum > 21 )
   k = k+1
 }
 
-#print(sum_cards(player_hands_all[[1]][2,3:14]))
-#print(sum_cards(player_hands_all[[1]][3,3:14]))
-#print(sum_cards(player_hands_all[[1]][4,3:14]))
+
 }
 
 bets_all[j] <- sum(bets)
@@ -299,8 +305,9 @@ z <- z+1
 
 
 ##limit
-#limit = runs
-limit = 100
+#all subsequent code is used to generate the output
+limit = runs
+#limit = 100
 
 bets_all_all
 winnings_all
